@@ -86,7 +86,8 @@ export default function Owner() {
 
   async function signIn(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setBusy(true); notice("");
+    setBusy(true);
+    notice("");
     try {
       const response = await fetch("/api/shop/owner/login", {
         method: "POST",
@@ -94,13 +95,32 @@ export default function Owner() {
         credentials: "same-origin",
         body: JSON.stringify({ username, passkey }),
       });
-      const data = await response.json() as { error?: string };
-      if (!response.ok) throw new Error(data.error || "Owner sign-in could not be completed.");
+
+      let data: { error?: string } = {};
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        try { data = await response.json(); } catch {}
+      }
+
+      if (!response.ok) {
+        throw new Error(data.error || "Owner sign-in requires running the backend server environment.");
+      }
+
       setPasskey("");
       await loadSession();
       notice("Owner access granted.");
-    } catch (cause) { notice(cause instanceof Error ? cause.message : "Owner sign-in could not be completed.", true); }
-    finally { setBusy(false); }
+    } catch (cause) {
+      notice(
+        cause instanceof Error && cause.message.includes("JSON")
+          ? "Owner sign-in requires running the backend server environment."
+          : cause instanceof Error
+          ? cause.message
+          : "Owner sign-in could not be completed.",
+        true
+      );
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function signOut() {
