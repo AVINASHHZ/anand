@@ -2,32 +2,12 @@ import { ChangeEvent, FormEvent, useCallback, useEffect, useState } from "react"
 import { ArrowLeft, ArrowUpRight, Bike, LogOut, Plus, ShieldCheck, Trash2 } from "lucide-react";
 import type { CycleRecord } from "@shared/shop";
 import { INITIAL_CYCLES } from "@shared/catalogue";
+import { getGlobalCloudCycles, saveGlobalCloudCycles } from "@shared/cloudSync";
 
 type Session = { authenticated: boolean; role: "owner" | "customer" | null };
 type ShopConfig = { ownerLoginReady: boolean; ownerGoogleLoginReady: boolean };
 
 const emptyDraft = { model: "", make: "Hercules", range: "Roadeo", wheelSize: "", detail: "", imageUrl: "" };
-
-const GLOBAL_CLOUD_ENDPOINTS = [
-  "/api/catalogue",
-  "https://api.npoint.io/c8a32a6fa58a8a725178"
-];
-
-async function syncGlobalCatalogue(updatedCycles: CycleRecord[]) {
-  try {
-    localStorage.setItem("anand_custom_cycles", JSON.stringify(updatedCycles));
-  } catch {}
-
-  for (const endpoint of GLOBAL_CLOUD_ENDPOINTS) {
-    try {
-      await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedCycles),
-      });
-    } catch { /* graceful fallback */ }
-  }
-}
 
 export default function Owner() {
   const [session, setSession] = useState<Session | null>(null);
@@ -88,35 +68,9 @@ export default function Owner() {
         }
       } catch {}
 
-      // Fetch global cloud catalogue across all devices
-      for (const endpoint of GLOBAL_CLOUD_ENDPOINTS) {
-        try {
-          const cloudRes = await fetch(endpoint, { cache: "no-store" });
-          if (cloudRes.ok) {
-            const cloudData = await cloudRes.json();
-            if (Array.isArray(cloudData) && cloudData.length > 0) {
-              setCycles(cloudData as CycleRecord[]);
-              try { localStorage.setItem("anand_custom_cycles", JSON.stringify(cloudData)); } catch {}
-              return;
-            }
-          }
-        } catch {}
-      }
-
-      // Fallback for static host: default brochure cycles + custom cycles stored locally
-      const defaultList: CycleRecord[] = INITIAL_CYCLES.map((c, i) => ({
-        ...c,
-        id: i + 1,
-        ownerAdded: false,
-      }));
-      const stored = localStorage.getItem("anand_custom_cycles");
-      let customList: CycleRecord[] = [];
-      if (stored) {
-        try { customList = JSON.parse(stored); } catch {}
-      }
-      const initialMerged = stored ? customList : defaultList;
-      setCycles(initialMerged);
-      syncGlobalCatalogue(initialMerged);
+      // Fetch global cloud cycles across all devices
+      const cloudCycles = await getGlobalCloudCycles();
+      setCycles(cloudCycles);
     }
   }, []);
 
@@ -256,7 +210,7 @@ export default function Owner() {
 
     setCycles((prev) => {
       const updated = [newRecord, ...prev];
-      syncGlobalCatalogue(updated);
+      saveGlobalCloudCycles(updated);
       return updated;
     });
 
@@ -276,7 +230,7 @@ export default function Owner() {
 
     setCycles((items) => {
       const updated = items.filter((item) => item.id !== cycle.id);
-      syncGlobalCatalogue(updated);
+      saveGlobalCloudCycles(updated);
       return updated;
     });
     notice(`${cycle.model} removed from the catalogue.`);
