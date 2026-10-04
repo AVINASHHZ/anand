@@ -2781,14 +2781,14 @@ section[id], section.hero-section {
   .cycle-grid {
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 10px !important;
+    gap: 12px !important;
     padding-bottom: 96px !important;
   }
 
   .cycle-card {
     display: flex !important;
     flex-direction: column !important;
-    border-radius: 14px !important;
+    border-radius: 16px !important;
     background: var(--surface-raised) !important;
     border: 1px solid var(--border-subtle) !important;
     overflow: hidden !important;
@@ -2804,10 +2804,10 @@ section[id], section.hero-section {
 
   .cycle-photo-wrap {
     width: 100% !important;
-    aspect-ratio: 4 / 3 !important;
-    min-height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+    min-height: 165px !important;
     background: var(--surface) !important;
-    padding: 6px !important;
+    padding: 10px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -2823,18 +2823,19 @@ section[id], section.hero-section {
     width: 100% !important;
     height: 100% !important;
     object-fit: contain !important;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.06)) !important;
   }
 
   .card-brand-badge {
     position: absolute !important;
-    top: 6px !important;
-    left: 6px !important;
-    padding: 3px 6px !important;
-    border-radius: 4px !important;
+    top: 8px !important;
+    left: 8px !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
     background: var(--green-700) !important;
     color: #ffffff !important;
     font-family: var(--font-mono) !important;
-    font-size: 8px !important;
+    font-size: 9px !important;
     font-weight: 700 !important;
     letter-spacing: 0.04em !important;
     z-index: 2 !important;
@@ -2842,21 +2843,21 @@ section[id], section.hero-section {
 
   .card-tag-badge {
     position: absolute !important;
-    top: 6px !important;
-    right: 6px !important;
-    padding: 3px 6px !important;
-    border-radius: 4px !important;
+    top: 8px !important;
+    right: 8px !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
     background: var(--accent) !important;
     color: #ffffff !important;
     font-family: var(--font-mono) !important;
-    font-size: 8px !important;
+    font-size: 9px !important;
     font-weight: 700 !important;
     letter-spacing: 0.04em !important;
     z-index: 2 !important;
   }
 
   .cycle-card-copy {
-    padding: 10px !important;
+    padding: 12px 14px 14px !important;
     display: flex !important;
     flex-direction: column !important;
     flex: 1 !important;
@@ -2864,23 +2865,23 @@ section[id], section.hero-section {
 
   .card-model-title {
     font-family: var(--font-display) !important;
-    font-size: 13px !important;
-    font-weight: 700 !important;
+    font-size: 15px !important;
+    font-weight: 800 !important;
     line-height: 1.25 !important;
     color: var(--text) !important;
-    margin: 0 0 4px 0 !important;
+    margin: 0 0 6px 0 !important;
     display: -webkit-box !important;
     -webkit-line-clamp: 2 !important;
     -webkit-box-orient: vertical !important;
     overflow: hidden !important;
-    height: 32px !important;
+    height: 38px !important;
   }
 
   .card-specs {
     font-family: var(--font-body) !important;
-    font-size: 11px !important;
+    font-size: 12px !important;
     color: var(--text-muted) !important;
-    margin: 0 0 8px 0 !important;
+    margin: 0 0 10px 0 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
@@ -2891,12 +2892,12 @@ section[id], section.hero-section {
     display: flex !important;
     flex-direction: column !important;
     gap: 8px !important;
-    padding-top: 6px !important;
+    padding-top: 8px !important;
     border-top: 1px solid var(--border-subtle) !important;
   }
 
   .price-on-enquiry {
-    font-size: 10px !important;
+    font-size: 11px !important;
     font-weight: 700 !important;
     color: var(--accent) !important;
   }
@@ -2909,25 +2910,25 @@ section[id], section.hero-section {
 
   .card-btn-wa {
     flex: 1 !important;
-    height: 38px !important;
-    min-height: 38px !important;
-    border-radius: 8px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    border-radius: 10px !important;
     background: linear-gradient(135deg, #25d366, #128c7e) !important;
     color: #ffffff !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 5px !important;
-    font-size: 11px !important;
-    font-weight: 600 !important;
+    gap: 6px !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
     text-decoration: none !important;
   }
 
   .card-btn-call {
-    width: 38px !important;
-    height: 38px !important;
-    min-height: 38px !important;
-    border-radius: 8px !important;
+    width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    border-radius: 10px !important;
     background: var(--surface) !important;
     border: 1px solid var(--border) !important;
     color: var(--text) !important;
@@ -2935,6 +2936,15 @@ section[id], section.hero-section {
     align-items: center !important;
     justify-content: center !important;
   }
+}
+
+/* Hide mobile bottom bar when product details/preview modal is active */
+body:has(.quickview-overlay) .mobile-bottom-bar,
+.quickview-overlay ~ .mobile-bottom-bar,
+.mobile-bottom-bar.is-hidden {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 /* ── SEARCH BAR & QUICKVIEW MODAL STYLES ───────────────── */

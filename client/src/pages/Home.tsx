@@ -96,7 +96,7 @@ function ThemeToggle() {
   );
 }
 
-function ShopHeader() {
+function ShopHeader({ isModalOpen }: { isModalOpen?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -316,7 +316,7 @@ function ShopHeader() {
       </div>
 
       {/* Fixed Mobile Bottom Bar (Call, WhatsApp, Directions) with auto-hide */}
-      <div className={`mobile-bottom-bar${hidden && !menuOpen ? " is-hidden" : ""}`} aria-label="Quick contact bar">
+      <div className={`mobile-bottom-bar${(hidden && !menuOpen) || isModalOpen ? " is-hidden" : ""}`} aria-label="Quick contact bar">
         <a href={PHONE_LINK} className="mobile-bar-call">
           <Phone size={16} className="icon-call" />
           <span>Call</span>
@@ -702,7 +702,7 @@ export default function Home() {
   return (
     <div className="shop-shell">
       <div className="scroll-progress" style={{ width: `${progress}%` }} aria-hidden="true" />
-      <ShopHeader />
+      <ShopHeader isModalOpen={selectedCycle !== null} />
 
       <main id="main-content" className="main-atmosphere">
         {/* Ambient Depth Glow Layer */}
