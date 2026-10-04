@@ -423,7 +423,7 @@ function CycleCard({ cycle, onSelect }: { cycle: CycleRecord; onSelect: (c: Cycl
 
   return (
     <article
-      className="cycle-card reveal"
+      className="cycle-card reveal is-visible"
       onClick={() => onSelect(cycle)}
     >
       <div className="cycle-photo-wrap">
@@ -658,7 +658,7 @@ export default function Home() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => { observer.disconnect(); window.removeEventListener("scroll", onScroll); };
-  }, [filter, searchQuery]);
+  }, [filter, searchQuery, displayLimit]);
 
   const visibleCycles = useMemo(() => {
     let result = cycles;
