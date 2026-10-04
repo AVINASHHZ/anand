@@ -20,19 +20,43 @@ export default function Owner() {
   const [uploadName, setUploadName] = useState("");
 
   const loadSession = useCallback(async () => {
-    const [sessionResult, configResult] = await Promise.all([
-      fetch("/api/shop/session", { cache: "no-store" }).then((res) => res.json() as Promise<Session>),
-      fetch("/api/shop/config", { cache: "no-store" }).then((res) => res.json() as Promise<ShopConfig>),
-    ]);
-    setSession(sessionResult);
-    setConfig(configResult);
-    if (sessionResult.role === "owner") {
-      const productResult = await fetch("/api/shop/products", { cache: "no-store" });
-      if (productResult.ok) setCycles(await productResult.json() as CycleRecord[]);
+    let sessionData: Session = { authenticated: false, role: null };
+    let configData: ShopConfig = { ownerLoginReady: true, ownerGoogleLoginReady: false };
+
+    try {
+      const [sessionRes, configRes] = await Promise.all([
+        fetch("/api/shop/session", { cache: "no-store" }).catch(() => null),
+        fetch("/api/shop/config", { cache: "no-store" }).catch(() => null),
+      ]);
+
+      if (sessionRes && sessionRes.ok) {
+        try { sessionData = await sessionRes.json(); } catch {}
+      }
+      if (configRes && configRes.ok) {
+        try { configData = await configRes.json(); } catch {}
+      }
+
+      setSession(sessionData);
+      setConfig(configData);
+
+      if (sessionData.role === "owner") {
+        try {
+          const productResult = await fetch("/api/shop/products", { cache: "no-store" });
+          if (productResult.ok) setCycles(await productResult.json() as CycleRecord[]);
+        } catch {}
+      }
+    } catch {
+      setSession(sessionData);
+      setConfig(configData);
     }
   }, []);
 
-  useEffect(() => { loadSession().catch(() => setSession({ authenticated: false, role: null })); }, [loadSession]);
+  useEffect(() => {
+    loadSession().catch(() => {
+      setSession({ authenticated: false, role: null });
+      setConfig({ ownerLoginReady: true, ownerGoogleLoginReady: false });
+    });
+  }, [loadSession]);
 
   function notice(text: string, isError = false) { setMessage(text); setError(isError); }
 
