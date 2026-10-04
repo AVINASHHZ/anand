@@ -625,16 +625,33 @@ export default function Home() {
   const [progress, setProgress] = useState(0);
   const shopStatus = useMemo(() => isShopOpen(), []);
 
-  /* Load catalogue from API (graceful fallback) */
+  /* Load catalogue from API (with local storage fallback for static hosts) */
   useEffect(() => {
     let active = true;
     const loadCatalogue = async () => {
       try {
         const response = await fetch("/api/shop/products", { cache: "no-store" });
-        if (!response.ok) return;
-        const liveCycles = await response.json() as CycleRecord[];
-        if (active && Array.isArray(liveCycles)) setCycles(liveCycles);
-      } catch { /* keep bundled catalogue */ }
+        if (response.ok) {
+          const liveCycles = await response.json() as CycleRecord[];
+          if (active && Array.isArray(liveCycles) && liveCycles.length > 0) {
+            setCycles(liveCycles);
+            return;
+          }
+        }
+      } catch { /* static mode fallback */ }
+
+      if (!active) return;
+      const stored = localStorage.getItem("anand_custom_cycles");
+      if (stored) {
+        try {
+          const customCycles = JSON.parse(stored);
+          if (Array.isArray(customCycles) && customCycles.length > 0) {
+            setCycles(customCycles);
+            return;
+          }
+        } catch {}
+      }
+      setCycles(fallbackCycles);
     };
     loadCatalogue();
     const refreshOnFocus = () => { if (document.visibilityState === "visible") loadCatalogue(); };
