@@ -8,6 +8,19 @@ type ShopConfig = { ownerLoginReady: boolean; ownerGoogleLoginReady: boolean };
 
 const emptyDraft = { model: "", make: "Hercules", range: "Roadeo", wheelSize: "", detail: "", imageUrl: "" };
 
+const GLOBAL_CLOUD_API = "https://kvdb.io/anandcycles_rajapalayam_v1/catalogue";
+
+async function syncGlobalCatalogue(updatedCycles: CycleRecord[]) {
+  try {
+    localStorage.setItem("anand_custom_cycles", JSON.stringify(updatedCycles));
+    await fetch(GLOBAL_CLOUD_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedCycles),
+    });
+  } catch { /* graceful fallback */ }
+}
+
 export default function Owner() {
   const [session, setSession] = useState<Session | null>(null);
   const [config, setConfig] = useState<ShopConfig | null>(null);
@@ -67,6 +80,19 @@ export default function Owner() {
         }
       } catch {}
 
+      // Fetch global cloud catalogue across all devices
+      try {
+        const cloudRes = await fetch(GLOBAL_CLOUD_API, { cache: "no-store" });
+        if (cloudRes.ok) {
+          const cloudData = await cloudRes.json();
+          if (Array.isArray(cloudData) && cloudData.length > 0) {
+            setCycles(cloudData as CycleRecord[]);
+            try { localStorage.setItem("anand_custom_cycles", JSON.stringify(cloudData)); } catch {}
+            return;
+          }
+        }
+      } catch {}
+
       // Fallback for static host: default brochure cycles + custom cycles stored locally
       const defaultList: CycleRecord[] = INITIAL_CYCLES.map((c, i) => ({
         ...c,
@@ -78,7 +104,9 @@ export default function Owner() {
       if (stored) {
         try { customList = JSON.parse(stored); } catch {}
       }
-      setCycles([...customList, ...defaultList]);
+      const initialMerged = stored ? customList : defaultList;
+      setCycles(initialMerged);
+      syncGlobalCatalogue(initialMerged);
     }
   }, []);
 
@@ -218,7 +246,7 @@ export default function Owner() {
 
     setCycles((prev) => {
       const updated = [newRecord, ...prev];
-      try { localStorage.setItem("anand_custom_cycles", JSON.stringify(updated)); } catch {}
+      syncGlobalCatalogue(updated);
       return updated;
     });
 
@@ -238,7 +266,7 @@ export default function Owner() {
 
     setCycles((items) => {
       const updated = items.filter((item) => item.id !== cycle.id);
-      try { localStorage.setItem("anand_custom_cycles", JSON.stringify(updated)); } catch {}
+      syncGlobalCatalogue(updated);
       return updated;
     });
     notice(`${cycle.model} removed from the catalogue.`);

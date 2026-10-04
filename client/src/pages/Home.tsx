@@ -616,6 +616,8 @@ function FaqSection() {
 /* ══════════════════════════════════════════════════════════════════════════
    HOME PAGE
    ══════════════════════════════════════════════════════════════════════════ */
+const GLOBAL_CLOUD_API = "https://kvdb.io/anandcycles_rajapalayam_v1/catalogue";
+
 export default function Home() {
   const [cycles, setCycles] = useState<CycleRecord[]>(fallbackCycles);
   const [filter, setFilter] = useState<CycleRange | "All" | "Latest">("All");
@@ -625,10 +627,11 @@ export default function Home() {
   const [progress, setProgress] = useState(0);
   const shopStatus = useMemo(() => isShopOpen(), []);
 
-  /* Load catalogue from API (with local storage fallback for static hosts) */
+  /* Load catalogue from API (with global cloud storage fallback for static hosts) */
   useEffect(() => {
     let active = true;
     const loadCatalogue = async () => {
+      // 1. Try server backend API
       try {
         const response = await fetch("/api/shop/products", { cache: "no-store" });
         if (response.ok) {
@@ -640,6 +643,20 @@ export default function Home() {
         }
       } catch { /* static mode fallback */ }
 
+      // 2. Try global cloud storage API (syncs across ALL devices worldwide)
+      try {
+        const cloudResponse = await fetch(GLOBAL_CLOUD_API, { cache: "no-store" });
+        if (cloudResponse.ok) {
+          const cloudCycles = await cloudResponse.json() as CycleRecord[];
+          if (active && Array.isArray(cloudCycles) && cloudCycles.length > 0) {
+            setCycles(cloudCycles);
+            try { localStorage.setItem("anand_custom_cycles", JSON.stringify(cloudCycles)); } catch {}
+            return;
+          }
+        }
+      } catch {}
+
+      // 3. Fallback to localStorage or bundled brochure catalogue
       if (!active) return;
       const stored = localStorage.getItem("anand_custom_cycles");
       if (stored) {
