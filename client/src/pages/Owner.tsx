@@ -8,17 +8,25 @@ type ShopConfig = { ownerLoginReady: boolean; ownerGoogleLoginReady: boolean };
 
 const emptyDraft = { model: "", make: "Hercules", range: "Roadeo", wheelSize: "", detail: "", imageUrl: "" };
 
-const GLOBAL_CLOUD_API = "https://kvdb.io/anandcycles_rajapalayam_v1/catalogue";
+const GLOBAL_CLOUD_ENDPOINTS = [
+  "/api/catalogue",
+  "https://api.npoint.io/c8a32a6fa58a8a725178"
+];
 
 async function syncGlobalCatalogue(updatedCycles: CycleRecord[]) {
   try {
     localStorage.setItem("anand_custom_cycles", JSON.stringify(updatedCycles));
-    await fetch(GLOBAL_CLOUD_API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updatedCycles),
-    });
-  } catch { /* graceful fallback */ }
+  } catch {}
+
+  for (const endpoint of GLOBAL_CLOUD_ENDPOINTS) {
+    try {
+      await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedCycles),
+      });
+    } catch { /* graceful fallback */ }
+  }
 }
 
 export default function Owner() {
@@ -81,17 +89,19 @@ export default function Owner() {
       } catch {}
 
       // Fetch global cloud catalogue across all devices
-      try {
-        const cloudRes = await fetch(GLOBAL_CLOUD_API, { cache: "no-store" });
-        if (cloudRes.ok) {
-          const cloudData = await cloudRes.json();
-          if (Array.isArray(cloudData) && cloudData.length > 0) {
-            setCycles(cloudData as CycleRecord[]);
-            try { localStorage.setItem("anand_custom_cycles", JSON.stringify(cloudData)); } catch {}
-            return;
+      for (const endpoint of GLOBAL_CLOUD_ENDPOINTS) {
+        try {
+          const cloudRes = await fetch(endpoint, { cache: "no-store" });
+          if (cloudRes.ok) {
+            const cloudData = await cloudRes.json();
+            if (Array.isArray(cloudData) && cloudData.length > 0) {
+              setCycles(cloudData as CycleRecord[]);
+              try { localStorage.setItem("anand_custom_cycles", JSON.stringify(cloudData)); } catch {}
+              return;
+            }
           }
-        }
-      } catch {}
+        } catch {}
+      }
 
       // Fallback for static host: default brochure cycles + custom cycles stored locally
       const defaultList: CycleRecord[] = INITIAL_CYCLES.map((c, i) => ({

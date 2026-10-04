@@ -3,6 +3,10 @@
   "outputDirectory": "dist/public",
   "rewrites": [
     {
+      "source": "/api/catalogue",
+      "destination": "/api/catalogue"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

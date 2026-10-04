@@ -616,7 +616,10 @@ function FaqSection() {
 /* ══════════════════════════════════════════════════════════════════════════
    HOME PAGE
    ══════════════════════════════════════════════════════════════════════════ */
-const GLOBAL_CLOUD_API = "https://kvdb.io/anandcycles_rajapalayam_v1/catalogue";
+const GLOBAL_CLOUD_ENDPOINTS = [
+  "/api/catalogue",
+  "https://api.npoint.io/c8a32a6fa58a8a725178"
+];
 
 export default function Home() {
   const [cycles, setCycles] = useState<CycleRecord[]>(fallbackCycles);
@@ -643,18 +646,20 @@ export default function Home() {
         }
       } catch { /* static mode fallback */ }
 
-      // 2. Try global cloud storage API (syncs across ALL devices worldwide)
-      try {
-        const cloudResponse = await fetch(GLOBAL_CLOUD_API, { cache: "no-store" });
-        if (cloudResponse.ok) {
-          const cloudCycles = await cloudResponse.json() as CycleRecord[];
-          if (active && Array.isArray(cloudCycles) && cloudCycles.length > 0) {
-            setCycles(cloudCycles);
-            try { localStorage.setItem("anand_custom_cycles", JSON.stringify(cloudCycles)); } catch {}
-            return;
+      // 2. Try Vercel Serverless Function & Global Cloud API (syncs across ALL devices worldwide)
+      for (const endpoint of GLOBAL_CLOUD_ENDPOINTS) {
+        try {
+          const cloudResponse = await fetch(endpoint, { cache: "no-store" });
+          if (cloudResponse.ok) {
+            const cloudCycles = await cloudResponse.json() as CycleRecord[];
+            if (active && Array.isArray(cloudCycles) && cloudCycles.length > 0) {
+              setCycles(cloudCycles);
+              try { localStorage.setItem("anand_custom_cycles", JSON.stringify(cloudCycles)); } catch {}
+              return;
+            }
           }
-        }
-      } catch {}
+        } catch {}
+      }
 
       // 3. Fallback to localStorage or bundled brochure catalogue
       if (!active) return;
