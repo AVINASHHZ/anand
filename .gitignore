@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Production build outputs
+dist/
+build/
+.output/
+
+# Environment variables & local secrets
+.env
+.env.local
+.env.*.local
+
+# Logs and debug files
+*.log
+.manus-logs/
+
+# Zip files / archives
+*.zip
+
+# OS / Editor temporary files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

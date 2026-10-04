@@ -1,0 +1,11 @@
+# Anand Cycles — Requested outcomes
+
+- [x] **Build the cycle catalogue.** Review the uploaded cycle brochures and list the identifiable Hercules bicycles from the Hercules Roadeo and Hercules Senior Roadsters sections with their actual brochure images and accurate available details. Also include the 16 models from the combined BSA/Hercules Junior Roadsters section, explicitly label them as the shared BSA / Hercules range, and do not claim those models are Hercules-only. Feature Hercules Roadeo Ravager SS. Do not show catalogue or online prices for any cycle; say “Price on enquiry” and ask customers to call the shop.
+- [x] **Show the local shop and contact information.** Include a real image of Rajapalayam, clearly presented as a place image rather than Anand Cycles’ storefront; show the shop address, No. 749, Opposite South Police Station, Tenkasi Road, Rajapalayam, Virudhunagar 626117, and Ashwin-confirmed number +91 72005 49950 as a tap-to-call action.
+- [ ] **Provide customer and owner sign-in.** Create a login page with Google sign-in for customers and a separate owner login using a username and passkey. Keep Google and owner credentials protected server-side; create real authenticated sessions and do not simulate login.
+- [ ] **Let the authenticated owner manage the catalogue.** After verified owner login, provide controls to add and delete cycle listings. Enforce owner authorization on the server and persist catalogue changes in the enabled managed MySQL database so changes survive application restarts and redeploys. Do not provide add/delete controls to visitors or customers.
+- [x] **Make the site polished and specific.** Deliver a responsive Anand Cycles website for Rajapalayam with purposeful, shop-specific copy and no generic AI-sounding filler.
+
+## Remaining activation
+
+The Google authorization flow, owner credential check, secure sessions, owner-only add/delete endpoints, and MySQL schema are implemented. Sign-in remains inactive until the protected project credential setup is completed. Google Cloud must also authorize the callback URL shown on `/login`. The two authentication outcomes remain unchecked because those values have not yet been supplied.

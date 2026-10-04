@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Anand Cycles — Hercules, BSA & Roadeo Bicycle Dealer | Rajapalayam</title>
+    
+    <!-- Meta Descriptions & SEO -->
+    <meta name="description" content="Authorized dealer for Hercules, BSA, and Roadeo bicycles in Rajapalayam. Located on Tenkasi Road opposite Axis Bank. Visit shop or contact via WhatsApp for current stock, prices & service." />
+    <meta name="keywords" content="Anand Cycles, Hercules Cycles, BSA Cycles, Roadeo Bicycles, Rajapalayam Cycle Shop, Tenkasi Road Bicycles, Kids Cycles Rajapalayam, MTB Rajapalayam" />
+    <meta name="author" content="Anand Cycles" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f5f2ea" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b1815" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Anand Cycles — Rajapalayam's Premier Bicycle Showroom" />
+    <meta property="og:description" content="Authorized Hercules, BSA & Roadeo cycle dealer on Tenkasi Road, Rajapalayam. Quality bicycles, authentic spare parts & expert service." />
+    <meta property="og:site_name" content="Anand Cycles" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <!-- Theme Inline Script to prevent theme FOUC -->
+    <script>
+      (function() {
+        try {
+          var savedTheme = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+
+    <!-- Structured Data JSON-LD for Local Business -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BicycleStore",
+        "name": "Anand Cycles",
+        "image": "https://anandcycles.in/og-image.jpg",
+        "telephone": "+919443122180",
+        "email": "anandcyclesrjpm@gmail.com",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Tenkasi Road, Opposite Axis Bank",
+          "addressLocality": "Rajapalayam",
+          "addressRegion": "Tamil Nadu",
+          "postalCode": "626117",
+          "addressCountry": "IN"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": "9.4532",
+          "longitude": "77.5539"
+        },
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            "opens": "09:00",
+            "closes": "21:00"
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Sunday"],
+            "opens": "10:00",
+            "closes": "18:00"
+          }
+        ],
+        "brand": [
+          { "@type": "Brand", "name": "Hercules" },
+          { "@type": "Brand", "name": "BSA" },
+          { "@type": "Brand", "name": "Roadeo" }
+        ],
+        "priceRange": "₹₹"
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="/api/platform/config.js"></script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
