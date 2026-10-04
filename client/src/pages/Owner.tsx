@@ -1,6 +1,7 @@
 import { ChangeEvent, FormEvent, useCallback, useEffect, useState } from "react";
 import { ArrowLeft, ArrowUpRight, Bike, LogOut, Plus, ShieldCheck, Trash2 } from "lucide-react";
 import type { CycleRecord } from "@shared/shop";
+import { INITIAL_CYCLES } from "@shared/catalogue";
 
 type Session = { authenticated: boolean; role: "owner" | "customer" | null };
 type ShopConfig = { ownerLoginReady: boolean; ownerGoogleLoginReady: boolean };
@@ -58,15 +59,26 @@ export default function Owner() {
       try {
         const productResult = await fetch("/api/shop/products", { cache: "no-store" });
         if (productResult.ok) {
-          setCycles(await productResult.json() as CycleRecord[]);
-          return;
+          const remoteData = await productResult.json();
+          if (Array.isArray(remoteData) && remoteData.length > 0) {
+            setCycles(remoteData as CycleRecord[]);
+            return;
+          }
         }
       } catch {}
-      // Fallback for static host custom cycles stored locally
+
+      // Fallback for static host: default brochure cycles + custom cycles stored locally
+      const defaultList: CycleRecord[] = INITIAL_CYCLES.map((c, i) => ({
+        ...c,
+        id: i + 1,
+        ownerAdded: false,
+      }));
       const stored = localStorage.getItem("anand_custom_cycles");
+      let customList: CycleRecord[] = [];
       if (stored) {
-        try { setCycles(JSON.parse(stored)); } catch {}
+        try { customList = JSON.parse(stored); } catch {}
       }
+      setCycles([...customList, ...defaultList]);
     }
   }, []);
 
